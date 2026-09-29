@@ -1,0 +1,468 @@
+```html
+{% extends 'base.html' %}
+
+{% block title %}Report an Issue | CivicPulse{% endblock %}
+
+{% block content %}
+
+<style>
+    .report-page {
+        max-width: 1150px;
+        margin: 20px auto 60px;
+    }
+
+    .report-hero {
+        background: linear-gradient(135deg, #111827, #1f2937);
+        color: white;
+        border-radius: 24px;
+        padding: 42px;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .report-hero::after {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 50%;
+        right: -70px;
+        top: -100px;
+    }
+
+    .hero-label {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: #93c5fd;
+        margin-bottom: 12px;
+    }
+
+    .report-hero h1 {
+        margin: 0 0 12px;
+        font-size: 38px;
+        line-height: 1.15;
+    }
+
+    .report-hero p {
+        margin: 0;
+        max-width: 680px;
+        color: #d1d5db;
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    .report-layout {
+        display: grid;
+        grid-template-columns: 1.5fr 0.8fr;
+        gap: 28px;
+        align-items: start;
+    }
+
+    .form-card,
+    .info-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e5e7eb;
+    }
+
+    .form-card h2,
+    .info-card h3 {
+        margin-top: 0;
+        color: #111827;
+    }
+
+    .form-card h2 {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+
+    .form-subtitle {
+        color: #6b7280;
+        margin-bottom: 28px;
+        line-height: 1.6;
+    }
+
+    .field {
+        margin-bottom: 20px;
+    }
+
+    .field label {
+        display: block;
+        font-weight: 700;
+        color: #374151;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        padding: 13px 14px;
+        font-size: 15px;
+        background: #f9fafb;
+        transition: 0.2s ease;
+        font-family: inherit;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+        outline: none;
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    .field textarea {
+        min-height: 130px;
+        resize: vertical;
+    }
+
+    .image-field {
+        border: 2px dashed #d1d5db;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        background: #f9fafb;
+    }
+
+    .image-icon {
+        font-size: 30px;
+        margin-bottom: 8px;
+    }
+
+    .image-field input {
+        background: white;
+        margin-top: 12px;
+    }
+
+    .help-text {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 7px;
+    }
+
+    .error-list {
+        background: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 15px 20px;
+        background: #2563eb;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .submit-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .info-card {
+        background: #f8fafc;
+    }
+
+    .info-card h3 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .step {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .step-number {
+        min-width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: #dbeafe;
+        color: #1d4ed8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 14px;
+    }
+
+    .step h4 {
+        margin: 0 0 5px;
+        color: #111827;
+        font-size: 15px;
+    }
+
+    .step p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .ai-box {
+        margin-top: 28px;
+        padding: 20px;
+        border-radius: 16px;
+        background: #111827;
+        color: white;
+    }
+
+    .ai-box .small-label {
+        font-size: 11px;
+        letter-spacing: 1.5px;
+        font-weight: 700;
+        color: #93c5fd;
+        margin-bottom: 8px;
+    }
+
+    .ai-box h4 {
+        margin: 0 0 8px;
+        font-size: 17px;
+    }
+
+    .ai-box p {
+        margin: 0;
+        color: #d1d5db;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 850px) {
+        .report-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .report-hero {
+            padding: 30px;
+        }
+
+        .report-hero h1 {
+            font-size: 30px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .report-hero,
+        .form-card,
+        .info-card {
+            padding: 22px;
+            border-radius: 16px;
+        }
+    }
+</style>
+
+<div class="report-page">
+
+    <!-- HERO -->
+    <section class="report-hero">
+        <div class="hero-label">CIVICPULSE COMMUNITY REPORTING</div>
+
+        <h1>Report a Civic Issue</h1>
+
+        <p>
+            Help your community by reporting problems such as road damage,
+            garbage, water issues, and other local civic concerns.
+        </p>
+    </section>
+
+    <div class="report-layout">
+
+        <!-- FORM -->
+        <div class="form-card">
+
+            <h2>Issue Details</h2>
+
+            <p class="form-subtitle">
+                Provide accurate information so CivicPulse can understand
+                and route your report effectively.
+            </p>
+
+            {% if form.non_field_errors %}
+                <div class="error-list">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- TITLE -->
+                <div class="field">
+                    <label for="{{ form.title.id_for_label }}">
+                        Issue Title
+                    </label>
+
+                    {{ form.title }}
+
+                    {% if form.title.errors %}
+                        <div class="error-list">
+                            {{ form.title.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="field">
+                    <label for="{{ form.description.id_for_label }}">
+                        Description
+                    </label>
+
+                    {{ form.description }}
+
+                    {% if form.description.errors %}
+                        <div class="error-list">
+                            {{ form.description.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- LOCATION -->
+                <div class="field">
+                    <label for="{{ form.location.id_for_label }}">
+                        Location
+                    </label>
+
+                    {{ form.location }}
+
+                    {% if form.location.errors %}
+                        <div class="error-list">
+                            {{ form.location.errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="help-text">
+                        Enter a street, area, landmark, village, or city.
+                    </div>
+                </div>
+
+                <!-- IMAGE -->
+                <div class="field">
+                    <label for="{{ form.image.id_for_label }}">
+                        Supporting Image
+                    </label>
+
+                    <div class="image-field">
+                        <div class="image-icon">📷</div>
+
+                        <strong>Upload a photo of the issue</strong>
+
+                        <div class="help-text">
+                            A clear image can help the AI understand the civic problem.
+                        </div>
+
+                        {{ form.image }}
+                    </div>
+
+                    {% if form.image.errors %}
+                        <div class="error-list">
+                            {{ form.image.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    Submit Civic Report →
+                </button>
+
+            </form>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <aside class="info-card">
+
+            <h3>What happens next?</h3>
+
+            <div class="step">
+                <div class="step-number">1</div>
+
+                <div>
+                    <h4>Your Report</h4>
+
+                    <p>
+                        Your issue details and supporting image are recorded
+                        in CivicPulse.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+
+                <div>
+                    <h4>AI Understanding</h4>
+
+                    <p>
+                        AI analyzes the reported issue and identifies its
+                        likely civic category.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+
+                <div>
+                    <h4>NGO Assignment</h4>
+
+                    <p>
+                        The issue can be routed to a relevant NGO based on
+                        category and operating location.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+
+                <div>
+                    <h4>Resolution</h4>
+
+                    <p>
+                        The assigned organization can review the issue,
+                        take action, and update its status.
+                    </p>
+                </div>
+            </div>
+
+            <div class="ai-box">
+                <div class="small-label">CIVICRECALL AGENT</div>
+
+                <h4>Learn from past experience</h4>
+
+                <p>
+                    CivicPulse can use stored past civic issue experiences
+                    to recall similar cases and provide practical guidance
+                    for the current issue.
+                </p>
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```
+

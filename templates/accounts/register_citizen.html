@@ -1,0 +1,401 @@
+{% extends 'base.html' %}
+
+{% block title %}Citizen Registration | CivicPulse{% endblock %}
+
+{% block content %}
+
+<style>
+    .register-page {
+        min-height: 78vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+    }
+
+    .register-wrapper {
+        width: 100%;
+        max-width: 1050px;
+        display: grid;
+        grid-template-columns: 0.85fr 1.15fr;
+        background: white;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid #e5e9f0;
+        box-shadow: 0 20px 55px rgba(31, 41, 55, 0.10);
+    }
+
+    /* LEFT PANEL */
+
+    .register-info {
+        background: #172033;
+        color: white;
+        padding: 50px 42px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .brand-mark {
+        width: 52px;
+        height: 52px;
+        background: #2563eb;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 25px;
+    }
+
+    .register-info h1 {
+        font-size: 34px;
+        line-height: 1.2;
+        margin-bottom: 16px;
+    }
+
+    .register-info h1 span {
+        color: #60a5fa;
+    }
+
+    .register-info > p {
+        color: #c5ccda;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 32px;
+    }
+
+    .info-item {
+        display: flex;
+        gap: 13px;
+        margin-bottom: 20px;
+    }
+
+    .info-icon {
+        min-width: 32px;
+        height: 32px;
+        background: #263550;
+        color: #60a5fa;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .info-item strong {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .info-item span {
+        color: #aeb7c7;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    /* FORM PANEL */
+
+    .register-form {
+        padding: 45px 48px;
+    }
+
+    .form-heading {
+        margin-bottom: 28px;
+    }
+
+    .form-heading h2 {
+        font-size: 30px;
+        color: #172033;
+        margin-bottom: 7px;
+    }
+
+    .form-heading p {
+        color: #7b8494;
+        font-size: 14px;
+    }
+
+    /* DJANGO FORM */
+
+    form p {
+        margin: 0 0 16px;
+    }
+
+    form label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #344054;
+        margin-bottom: 7px;
+    }
+
+    form input,
+    form textarea,
+    form select {
+        width: 100%;
+        padding: 12px 13px;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        background: white;
+        color: #172033;
+        font-size: 14px;
+        outline: none;
+        margin: 0;
+    }
+
+    form input:focus,
+    form textarea:focus,
+    form select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    form ul {
+        color: #7b8494;
+        font-size: 11px;
+        margin: 5px 0 0 18px;
+        padding: 0;
+    }
+
+    .helptext {
+        display: block;
+        color: #8a93a3;
+        font-size: 11px;
+        margin-top: 5px;
+    }
+
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 8px;
+        color: #be123c;
+        font-size: 12px;
+    }
+
+    .form-errors {
+        background: #fff1f2;
+        border: 1px solid #fecdd3;
+        color: #be123c;
+        border-radius: 8px;
+        padding: 11px 13px;
+        font-size: 13px;
+        margin-bottom: 18px;
+    }
+
+    .register-button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 9px;
+        background: #2563eb;
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 5px;
+    }
+
+    .register-button:hover {
+        background: #1d4ed8;
+    }
+
+    /* FOOT LINKS */
+
+    .account-links {
+        text-align: center;
+        border-top: 1px solid #edf0f4;
+        margin-top: 24px;
+        padding-top: 20px;
+    }
+
+    .account-links p {
+        color: #7b8494;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .account-links a {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .account-links a:hover {
+        text-decoration: underline;
+    }
+
+    .ngo-link {
+        margin-top: 8px;
+    }
+
+    @media (max-width: 800px) {
+
+        .register-wrapper {
+            grid-template-columns: 1fr;
+        }
+
+        .register-info {
+            padding: 38px 30px;
+        }
+
+        .register-form {
+            padding: 38px 30px;
+        }
+
+        .register-info h1 {
+            font-size: 29px;
+        }
+    }
+</style>
+
+<div class="register-page">
+
+```
+<div class="register-wrapper">
+
+    <!-- INFORMATION PANEL -->
+
+    <div class="register-info">
+
+        <div class="brand-mark">
+            CP
+        </div>
+
+        <h1>
+            Join <span>CivicPulse</span>
+        </h1>
+
+        <p>
+            Create your citizen account and help make
+            your community more responsive and connected.
+        </p>
+
+
+        <div class="info-item">
+
+            <div class="info-icon">
+                01
+            </div>
+
+            <div>
+                <strong>Report Problems</strong>
+
+                <span>
+                    Report road, water, garbage, and other
+                    civic issues in your area.
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+            <div class="info-icon">
+                AI
+            </div>
+
+            <div>
+                <strong>AI-Assisted Reporting</strong>
+
+                <span>
+                    Your submitted issue can be analyzed
+                    and categorized using AI.
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+            <div class="info-icon">
+                ✓
+            </div>
+
+            <div>
+                <strong>Track Your Reports</strong>
+
+                <span>
+                    Follow the status of the civic issues
+                    you have reported.
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REGISTRATION FORM -->
+
+    <div class="register-form">
+
+        <div class="form-heading">
+
+            <h2>
+                Create Citizen Account
+            </h2>
+
+            <p>
+                Enter your details to get started with CivicPulse.
+            </p>
+
+        </div>
+
+
+        {% if form.non_field_errors %}
+
+            <div class="form-errors">
+
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="register-button">
+                Create Account →
+            </button>
+
+        </form>
+
+
+        <div class="account-links">
+
+            <p>
+                Already have an account?
+                <a href="{% url 'login' %}">
+                    Login
+                </a>
+            </p>
+
+            <p class="ngo-link">
+                Registering on behalf of an organization?
+                <a href="{% url 'register_ngo' %}">
+                    NGO Registration
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+{% endblock %}

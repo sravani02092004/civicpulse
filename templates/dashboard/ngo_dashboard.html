@@ -1,0 +1,516 @@
+
+{% extends 'base.html' %}
+
+{% block title %}NGO Dashboard - CivicPulse{% endblock %}
+
+{% block content %}
+
+<style>
+    .dashboard-header {
+        margin-bottom: 25px;
+    }
+
+    .dashboard-header h1 {
+        margin-bottom: 8px;
+        color: #edc534;
+    }
+
+    .dashboard-header p {
+        color: #6b7280;
+    }
+
+    .ngo-profile {
+        background: linear-gradient(135deg, #075a29, #2563eb);
+        color: white;
+        padding: 25px;
+        border-radius: 14px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+    }
+
+    .ngo-profile h2 {
+        margin-top: 0;
+        margin-bottom: 18px;
+    }
+
+    .ngo-info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .ngo-info {
+        background: rgba(255, 255, 255, 0.12);
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .ngo-info span {
+        display: block;
+        font-size: 13px;
+        opacity: 0.8;
+        margin-bottom: 5px;
+    }
+
+    .ngo-info strong {
+        font-size: 16px;
+    }
+
+    .section-title {
+        margin-bottom: 15px;
+        color: #111827;
+    }
+
+    .issue-card {
+        background: white;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+    }
+
+    .issue-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .issue-header h3 {
+        margin: 0;
+        color: #111827;
+        font-size: 22px;
+    }
+
+    .status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .status-resolved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-open {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .issue-details {
+        background: #f9fafb;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+    }
+
+    .issue-details p {
+        margin: 7px 0;
+    }
+
+    .memory-toggle-btn {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 11px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 5px;
+    }
+
+    .memory-toggle-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .memory-container {
+        margin-top: 18px;
+    }
+
+    .memory-container[hidden] {
+        display: none;
+    }
+
+    .memory-box {
+        padding: 18px;
+        border-radius: 12px;
+        margin-top: 12px;
+    }
+
+    .recall-box {
+        background: #eff6ff;
+        border-left: 5px solid #2563eb;
+    }
+
+    .reflect-box {
+        background: #f5f3ff;
+        border-left: 5px solid #7c3aed;
+    }
+
+    .memory-box h4 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        color: #111827;
+    }
+
+    .memory-item {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        line-height: 1.5;
+    }
+
+    .recommendation {
+        line-height: 1.7;
+        color: #374151;
+        white-space: pre-line;
+    }
+
+    .no-memory {
+        color: #6b7280;
+    }
+
+    .resolved-box {
+        margin-top: 18px;
+        padding: 15px;
+        background: #ecfdf5;
+        border-left: 5px solid #16a34a;
+        border-radius: 10px;
+    }
+
+    .resolved-box strong {
+        color: #166534;
+    }
+
+    .empty-box {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+        color: #6b7280;
+        border: 1px solid #e5e7eb;
+    }
+
+    @media (max-width: 700px) {
+
+        .ngo-info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .issue-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="dashboard-header">
+
+```
+<h1>NGO Dashboard</h1>
+
+<p>
+    Review assigned civic complaints and use organizational memory
+    to guide resolution.
+</p>
+```
+
+</div>
+
+<div class="ngo-profile">
+
+```
+<h2>{{ ngo.organization_name }}</h2>
+
+<div class="ngo-info-grid">
+
+    <div class="ngo-info">
+        <span>Focus Area</span>
+        <strong>{{ ngo.category_focus }}</strong>
+    </div>
+
+    <div class="ngo-info">
+        <span>Operating Location</span>
+        <strong>{{ ngo.operating_location }}</strong>
+    </div>
+
+    <div class="ngo-info">
+        <span>Assigned Complaints</span>
+        <strong>{{ assigned_issues|length }}</strong>
+    </div>
+
+</div>
+```
+
+</div>
+
+<h2 class="section-title">
+    Assigned Complaints
+</h2>
+
+{% if assigned_issues %}
+
+```
+{% for issue in assigned_issues %}
+
+    <div class="issue-card">
+
+        <div class="issue-header">
+
+            <h3>
+                {{ issue.title }}
+            </h3>
+
+            {% if issue.status == 'RESOLVED' %}
+
+                <span class="status status-resolved">
+                    ✓ RESOLVED
+                </span>
+
+            {% else %}
+
+                <span class="status status-open">
+                    {{ issue.status }}
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="issue-details">
+
+            <p>
+                <strong>Location:</strong>
+                {{ issue.location }}
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+                {{ issue.description }}
+            </p>
+
+            {% if issue.detected_category %}
+
+                <p>
+                    <strong>AI Category:</strong>
+                    {{ issue.detected_category }}
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- AI MEMORY BUTTON -->
+
+        <button
+            type="button"
+            class="memory-toggle-btn"
+            onclick="toggleMemory('memory-{{ issue.id }}', this)"
+        >
+            CivicRecall Agent
+        </button>
+
+
+        <!-- AI MEMORY CONTENT -->
+
+        <div
+            id="memory-{{ issue.id }}"
+            class="memory-container"
+            hidden
+        >
+
+            {% if issue.similar_memories %}
+
+                <div class="memory-box recall-box">
+
+                    <h4>
+                        Similar Past Experiences
+                    </h4>
+
+                    {% for memory in issue.similar_memories.results %}
+
+                        <div class="memory-item">
+                            {{ memory.text }}
+                        </div>
+
+                    {% empty %}
+
+                        <p class="no-memory">
+                            No similar past experiences were found.
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="memory-box recall-box">
+
+                    <h4>
+                        Hindsight recall
+                    </h4>
+
+                    <p class="no-memory">
+                        No similar past experiences were found.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+            {% if issue.reflection %}
+
+                <div class="memory-box reflect-box">
+
+                    <h4>
+                        🤖 AI Memory Recommendation
+                    </h4>
+
+                    <div class="recommendation">
+                        {{ issue.reflection.text|linebreaksbr }}
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="memory-box reflect-box">
+
+                    <h4>
+                        🤖 AI Memory Recommendation
+                    </h4>
+
+                    <p class="no-memory">
+                        No recommendation is currently available.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if issue.status == 'RESOLVED' %}
+
+            <div class="resolved-box">
+
+                <strong>
+                    ✓ Issue Resolved
+                </strong>
+
+                <p>
+                    {{ issue.resolution_details }}
+                </p>
+
+            </div>
+
+        {% else %}
+
+            <a
+                href="{% url 'update_issue_status' issue.id %}"
+                class="btn"
+            >
+                Update Issue
+            </a>
+
+        {% endif %}
+
+    </div>
+
+{% endfor %}
+```
+
+{% else %}
+
+```
+<div class="empty-box">
+
+    No complaints are currently assigned
+    to your organization.
+
+</div>
+```
+
+{% endif %}
+
+<h2
+    class="section-title"
+    style="margin-top: 35px;"
+>
+    Open / Unassigned Issues
+</h2>
+
+{% if unassigned_issues %}
+
+```
+{% for issue in unassigned_issues %}
+
+    <div class="issue-card">
+
+        <h3>
+            {{ issue.title }}
+        </h3>
+
+        <p>
+            <strong>Location:</strong>
+            {{ issue.location }}
+        </p>
+
+        <p>
+            <strong>Category:</strong>
+            {{ issue.detected_category|default:"Unclassified" }}
+        </p>
+
+    </div>
+
+{% endfor %}
+```
+
+{% else %}
+
+```
+<div class="empty-box">
+
+    No open unassigned complaints.
+
+</div>
+```
+
+{% endif %}
+
+<script>
+
+function toggleMemory(memoryId, button) {
+
+    const memoryBox = document.getElementById(memoryId);
+
+    if (memoryBox.hidden) {
+
+        memoryBox.hidden = false;
+
+        button.textContent = "🔽 Hide CivicRecall Agent";
+
+    } else {
+
+        memoryBox.hidden = true;
+
+        button.textContent = "CivicRecall Agent";
+
+    }
+
+}
+
+</script>
+
+{% endblock %}

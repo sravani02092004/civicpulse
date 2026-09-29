@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}My Issues - CivicPulse{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+    <h1>My Reported Issues</h1>
+
+    <p>
+        <a href="{% url 'report_issue' %}" class="btn">
+            + Report New Issue
+        </a>
+    </p>
+
+    {% if issues %}
+
+        {% for issue in issues %}
+
+            <div class="card" style="margin-top: 20px;">
+
+                <h3>{{ issue.title }}</h3>
+
+                <p>
+                    <strong>Location:</strong>
+                    {{ issue.location }}
+                </p>
+
+                <p>
+                    <strong>Description:</strong>
+                    {{ issue.description|truncatechars:90 }}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    {{ issue.status }}
+                </p>
+
+                <p>
+                    <strong>Reported on:</strong>
+                    {{ issue.created_at|date:"M d, Y" }}
+                </p>
+
+                {% if issue.image %}
+                    <p>
+                        <img src="{{ issue.image.url }}"
+                             alt="Issue image"
+                             style="max-width: 300px;">
+                    </p>
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            You haven't reported any issues yet.
+            Click the button above to create one.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

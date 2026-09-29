@@ -1,0 +1,687 @@
+{% extends 'base.html' %}
+
+{% block title %}Public Feed | CivicPulse{% endblock %}
+
+{% block content %}
+
+<style>
+    .feed-page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 20px 10px 60px;
+    }
+
+    /* HEADER */
+
+    .feed-header {
+        background: linear-gradient(135deg, #172033, #263550);
+        color: white;
+        border-radius: 20px;
+        padding: 42px;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feed-header::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        border: 35px solid rgba(255,255,255,0.04);
+        right: -70px;
+        top: -80px;
+    }
+
+    .feed-badge {
+        display: inline-block;
+        padding: 7px 12px;
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 15px;
+    }
+
+    .feed-header h1 {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .feed-header p {
+        color: #c7cfdd;
+        max-width: 650px;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    /* FILTERS */
+
+    .filter-card {
+        background: white;
+        border: 1px solid #e5e9f0;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 28px;
+        box-shadow: 0 5px 20px rgba(31, 41, 55, 0.04);
+    }
+
+    .filter-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #172033;
+        margin-bottom: 15px;
+    }
+
+    .filter-form {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .filter-group label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #667085;
+        margin-bottom: 6px;
+    }
+
+    .filter-group input,
+    .filter-group select {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        font-size: 13px;
+        outline: none;
+        margin: 0;
+        background: white;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+        border-color: #2563eb;
+    }
+
+    .filter-button {
+        padding: 11px 20px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .filter-button:hover {
+        background: #1d4ed8;
+    }
+
+    /* FEED HEADER */
+
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .results-header h2 {
+        font-size: 20px;
+        color: #172033;
+    }
+
+    .results-header span {
+        font-size: 12px;
+        color: #7b8494;
+    }
+
+    /* ISSUE GRID */
+
+    .issue-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .issue-card {
+        background: white;
+        border: 1px solid #e5e9f0;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: 0.2s ease;
+    }
+
+    .issue-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
+    }
+
+    .issue-image {
+        height: 180px;
+        background: #eef1f5;
+        overflow: hidden;
+    }
+
+    .issue-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .no-image {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #98a2b3;
+        font-size: 13px;
+    }
+
+    .issue-content {
+        padding: 20px;
+    }
+
+    .issue-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .issue-content h3 {
+        font-size: 17px;
+        color: #172033;
+        line-height: 1.3;
+    }
+
+    /* STATUS */
+
+    .status {
+        display: inline-block;
+        white-space: nowrap;
+        padding: 5px 8px;
+        border-radius: 15px;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .status-pending {
+        background: #fff7e6;
+        color: #b76e00;
+    }
+
+    .status-open {
+        background: #eef4ff;
+        color: #2563eb;
+    }
+
+    .status-progress {
+        background: #f0ecff;
+        color: #6941c6;
+    }
+
+    .status-resolved {
+        background: #e9f8ef;
+        color: #16803c;
+    }
+
+    .status-rejected {
+        background: #fff1f2;
+        color: #be123c;
+    }
+
+    .category {
+        display: inline-block;
+        background: #eef4ff;
+        color: #2563eb;
+        padding: 5px 9px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .description {
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+    .issue-meta {
+        border-top: 1px solid #edf0f4;
+        padding-top: 13px;
+    }
+
+    .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #7b8494;
+        font-size: 11px;
+        margin-bottom: 7px;
+    }
+
+    .meta-row strong {
+        color: #475467;
+    }
+
+    /* EMPTY STATE */
+
+    .empty-state {
+        background: white;
+        border: 1px solid #e5e9f0;
+        border-radius: 15px;
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 58px;
+        height: 58px;
+        background: #eef4ff;
+        color: #2563eb;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        font-size: 23px;
+        font-weight: 700;
+    }
+
+    .empty-state h3 {
+        margin-bottom: 8px;
+        color: #172033;
+    }
+
+    .empty-state p {
+        color: #7b8494;
+        font-size: 13px;
+    }
+
+    /* CTA */
+
+    .feed-cta {
+        margin-top: 40px;
+        background: #eef4ff;
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .feed-cta h3 {
+        color: #172033;
+        margin-bottom: 8px;
+    }
+
+    .feed-cta p {
+        color: #667085;
+        font-size: 13px;
+        margin-bottom: 18px;
+    }
+
+    .report-button {
+        display: inline-block;
+        padding: 11px 20px;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+
+        .issue-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .filter-form {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+
+        .issue-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .feed-header {
+            padding: 30px 24px;
+        }
+
+        .feed-header h1 {
+            font-size: 29px;
+        }
+
+        .results-header {
+            align-items: flex-start;
+            gap: 10px;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="feed-page">
+
+```
+<!-- HEADER -->
+
+<div class="feed-header">
+
+    <div class="feed-badge">
+        CIVICPULSE COMMUNITY
+    </div>
+
+    <h1>
+        Public Civic Feed
+    </h1>
+
+    <p>
+        Explore civic issues reported by the community,
+        see their current status, and understand how problems
+        are being tracked toward resolution.
+    </p>
+
+</div>
+
+
+<!-- FILTERS -->
+
+<div class="filter-card">
+
+    <div class="filter-title">
+        Search & Filter Issues
+    </div>
+
+    <form method="GET" class="filter-form">
+
+        <div class="filter-group">
+
+            <label>
+                SEARCH
+            </label>
+
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search title, description or location..."
+            >
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label>
+                CATEGORY
+            </label>
+
+            <select name="category">
+
+                <option value="">
+                    All Categories
+                </option>
+
+                <option value="ROADS"
+                    {% if category == 'ROADS' %}selected{% endif %}>
+                    Road Damage
+                </option>
+
+                <option value="GARBAGE"
+                    {% if category == 'GARBAGE' %}selected{% endif %}>
+                    Garbage
+                </option>
+
+                <option value="WATER"
+                    {% if category == 'WATER' %}selected{% endif %}>
+                    Water
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label>
+                STATUS
+            </label>
+
+            <select name="status">
+
+                <option value="">
+                    All Statuses
+                </option>
+
+                <option value="OPEN"
+                    {% if status == 'OPEN' %}selected{% endif %}>
+                    Open
+                </option>
+
+                <option value="IN_PROGRESS"
+                    {% if status == 'IN_PROGRESS' %}selected{% endif %}>
+                    In Progress
+                </option>
+
+                <option value="RESOLVED"
+                    {% if status == 'RESOLVED' %}selected{% endif %}>
+                    Resolved
+                </option>
+
+                <option value="REJECTED"
+                    {% if status == 'REJECTED' %}selected{% endif %}>
+                    Rejected
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <button type="submit" class="filter-button">
+            Search
+        </button>
+
+    </form>
+
+</div>
+
+
+<!-- RESULTS -->
+
+<div class="results-header">
+
+    <h2>
+        Community Issues
+    </h2>
+
+    <span>
+        Showing reported civic problems
+    </span>
+
+</div>
+
+
+{% if issues %}
+
+    <div class="issue-grid">
+
+        {% for issue in issues %}
+
+            <div class="issue-card">
+
+                <!-- IMAGE -->
+
+                <div class="issue-image">
+
+                    {% if issue.image %}
+
+                        <img
+                            src="{{ issue.image.url }}"
+                            alt="{{ issue.title }}"
+                        >
+
+                    {% else %}
+
+                        <div class="no-image">
+                            No image available
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- CONTENT -->
+
+                <div class="issue-content">
+
+                    <div class="issue-top">
+
+                        <h3>
+                            {{ issue.title }}
+                        </h3>
+
+
+                        {% if issue.status == 'RESOLVED' %}
+
+                            <span class="status status-resolved">
+                                RESOLVED
+                            </span>
+
+                        {% elif issue.status == 'IN_PROGRESS' %}
+
+                            <span class="status status-progress">
+                                IN PROGRESS
+                            </span>
+
+                        {% elif issue.status == 'OPEN' %}
+
+                            <span class="status status-open">
+                                OPEN
+                            </span>
+
+                        {% elif issue.status == 'REJECTED' %}
+
+                            <span class="status status-rejected">
+                                REJECTED
+                            </span>
+
+                        {% else %}
+
+                            <span class="status status-pending">
+                                PENDING
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    {% if issue.detected_category %}
+
+                        <span class="category">
+                            AI: {{ issue.detected_category }}
+                        </span>
+
+                    {% endif %}
+
+
+                    <p class="description">
+                        {{ issue.description|truncatechars:150 }}
+                    </p>
+
+
+                    <div class="issue-meta">
+
+                        <div class="meta-row">
+                            <strong>Location:</strong>
+                            {{ issue.location }}
+                        </div>
+
+                        <div class="meta-row">
+                            <strong>Reported:</strong>
+                            {{ issue.created_at|date:"d M Y" }}
+                        </div>
+
+                        {% if issue.assigned_ngo %}
+
+                            <div class="meta-row">
+                                <strong>Assigned NGO:</strong>
+                                {{ issue.assigned_ngo.organization_name }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="empty-state">
+
+        <div class="empty-icon">
+            +
+        </div>
+
+        <h3>
+            No civic issues found
+        </h3>
+
+        <p>
+            Try changing your search or filters,
+            or report a new civic issue.
+        </p>
+
+    </div>
+
+{% endif %}
+
+
+<!-- CTA -->
+
+<div class="feed-cta">
+
+    <h3>
+        See a civic problem in your area?
+    </h3>
+
+    <p>
+        Report it through CivicPulse and help bring
+        visibility to local community issues.
+    </p>
+
+    <a href="{% url 'report_issue' %}" class="report-button">
+        Report an Issue →
+    </a>
+
+</div>
+```
+
+</div>
+
+{% endblock %}

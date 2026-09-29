@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - CivicPulse{% endblock %}
+
+{% block content %}
+
+<style>
+    .dashboard-page {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .hero {
+        background: linear-gradient(135deg, #111827, #1e3a8a);
+        color: white;
+        padding: 45px;
+        border-radius: 22px;
+        margin-bottom: 28px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .hero-tag {
+        display: inline-block;
+        padding: 7px 12px;
+        background: rgba(255,255,255,0.12);
+        border-radius: 20px;
+        font-size: 13px;
+        margin-bottom: 18px;
+    }
+
+    .hero h1 {
+        margin: 0 0 12px;
+        font-size: 34px;
+        letter-spacing: -0.5px;
+    }
+
+    .hero p {
+        margin: 0;
+        max-width: 700px;
+        line-height: 1.7;
+        color: #dbeafe;
+        font-size: 16px;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+    }
+
+    .action-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .action-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.09);
+    }
+
+    .icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+        background: #eff6ff;
+        margin-bottom: 18px;
+    }
+
+    .action-card h2 {
+        margin: 0 0 10px;
+        color: #111827;
+        font-size: 21px;
+    }
+
+    .action-card p {
+        color: #6b7280;
+        line-height: 1.6;
+        margin-bottom: 22px;
+    }
+
+    .action-link {
+        display: inline-block;
+        padding: 11px 18px;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        border-radius: 9px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .action-link:hover {
+        background: #1d4ed8;
+    }
+
+    .info-section {
+        margin-top: 28px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 28px;
+    }
+
+    .info-section h2 {
+        margin-top: 0;
+        color: #111827;
+    }
+
+    .flow {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .flow-item {
+        background: #f9fafb;
+        padding: 18px;
+        border-radius: 12px;
+        text-align: center;
+        color: #374151;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .flow-number {
+        display: block;
+        font-size: 12px;
+        color: #2563eb;
+        margin-bottom: 7px;
+    }
+
+    @media (max-width: 750px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .flow {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .hero {
+            padding: 30px;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+        }
+    }
+</style>
+
+<div class="dashboard-page">
+
+```
+{% if role == 'CITIZEN' %}
+
+    <div class="hero">
+        <span class="hero-tag">CITIZEN PORTAL</span>
+
+        <h1>Welcome, {{ user.username }}!</h1>
+
+        <p>
+            Report civic problems in your area, track their progress,
+            and help your community get issues resolved.
+        </p>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="action-card">
+            <div class="icon-box">📍</div>
+
+            <h2>Report a Civic Issue</h2>
+
+            <p>
+                Submit a road, water, garbage, or other civic complaint
+                with details and an image.
+            </p>
+
+            <a href="{% url 'report_issue' %}" class="action-link">
+                Report Issue →
+            </a>
+        </div>
+
+        <div class="action-card">
+            <div class="icon-box">📋</div>
+
+            <h2>My Reports</h2>
+
+            <p>
+                View the civic issues you have reported and check their
+                current resolution status.
+            </p>
+
+            <a href="{% url 'my_issues' %}" class="action-link">
+                View My Reports →
+            </a>
+        </div>
+
+    </div>
+
+    <div class="info-section">
+
+        <h2>How CivicPulse Works</h2>
+
+        <p>
+            Your complaint moves through an AI-assisted civic resolution
+            workflow.
+        </p>
+
+        <div class="flow">
+
+            <div class="flow-item">
+                <span class="flow-number">01</span>
+                Report
+            </div>
+
+            <div class="flow-item">
+                <span class="flow-number">02</span>
+                AI Analysis
+            </div>
+
+            <div class="flow-item">
+                <span class="flow-number">03</span>
+                NGO Action
+            </div>
+
+            <div class="flow-item">
+                <span class="flow-number">04</span>
+                Resolution
+            </div>
+
+        </div>
+
+    </div>
+
+{% elif role == 'NGO' %}
+
+    <div class="hero">
+        <span class="hero-tag">NGO PORTAL</span>
+
+        <h1>Welcome, {{ user.username }}!</h1>
+
+        <p>
+            Review assigned civic complaints, learn from previous
+            resolutions, and use Hindsight-powered insights to guide
+            your resolution workflow.
+        </p>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="action-card">
+            <div class="icon-box">🏢</div>
+
+            <h2>Assigned Issues</h2>
+
+            <p>
+                Review civic complaints assigned to your organization
+                and manage their resolution progress.
+            </p>
+
+            <a href="/issues/ngo/" class="action-link">
+    View Assigned Issues →
+              </a>
+        </div>
+
+        <div class="action-card">
+            <div class="icon-box">🧠</div>
+
+            <h2>CivicRecall Agent</h2>
+
+            <p>
+                Use past civic experiences stored through Hindsight
+                to identify similar cases and receive resolution guidance.
+            </p>
+
+            <a href="/issues/ngo/" class="action-link">
+    Open Insights →
+           </a>
+        </div>
+
+    </div>
+
+    <div class="info-section">
+
+        <h2>Resolution Workflow</h2>
+
+        <p>
+            CivicPulse combines AI analysis with organizational memory
+            to support NGO resolution decisions.
+        </p>
+
+        <div class="flow">
+
+            <div class="flow-item">
+                <span class="flow-number">01</span>
+                Assigned Issue
+            </div>
+
+            <div class="flow-item">
+                <span class="flow-number">02</span>
+                Past Experiences
+            </div>
+
+            <div class="flow-item">
+                <span class="flow-number">03</span>
+                AI Guidance
+            </div>
+
+            <div class="flow-item">
+                <span class="flow-number">04</span>
+                Resolve
+            </div>
+
+        </div>
+
+    </div>
+
+{% else %}
+
+    <div class="hero">
+        <span class="hero-tag">ADMIN PORTAL</span>
+
+        <h1>Welcome, {{ user.username }}!</h1>
+
+        <p>
+            Manage civic operations, users, complaints, and resolution
+            workflows from the administration panel.
+        </p>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="action-card">
+            <div class="icon-box">⚙️</div>
+
+            <h2>Administration</h2>
+
+            <p>
+                Manage CivicPulse data, users, NGOs, and reported issues.
+            </p>
+
+            <a href="/admin/" class="action-link">
+                Open Admin →
+            </a>
+        </div>
+
+    </div>
+
+{% endif %}
+```
+
+</div>
+
+{% endblock %}
+

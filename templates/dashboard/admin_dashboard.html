@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - CivicPulse{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+    <h1>Municipal Admin Dashboard</h1>
+
+    <div style="margin-top: 20px;">
+
+        <div class="card">
+            <h2>{{ total_issues }}</h2>
+            <p>Total Issues Reported</p>
+        </div>
+
+        <div class="card">
+            <h2>{{ pending_issues }}</h2>
+            <p>Pending Resolution</p>
+        </div>
+
+        <div class="card">
+            <h2>{{ resolved_issues }}</h2>
+            <p>Successfully Resolved</p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card" style="margin-top: 20px;">
+
+    <h2>All Reported Civic Issues</h2>
+
+    {% if all_issues %}
+
+    <table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Location</th>
+                <th>Category</th>
+                <th>Assigned NGO</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for issue in all_issues %}
+
+            <tr>
+                <td>#{{ issue.id }}</td>
+
+                <td>
+                    {{ issue.title }}
+                </td>
+
+                <td>
+                    {{ issue.location }}
+                </td>
+
+                <td>
+                    {{ issue.detected_category|default:"Pending AI" }}
+                </td>
+
+                <td>
+                    {{ issue.assigned_ngo.organization_name|default:"Unassigned" }}
+                </td>
+
+                <td>
+                    {{ issue.status }}
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <p>
+            No civic issues have been reported yet.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

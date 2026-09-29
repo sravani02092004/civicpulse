@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Resolve Issue - CivicPulse{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+    <h1>Resolve Issue #{{ issue.id }}</h1>
+
+    <p>
+        <strong>Title:</strong>
+        {{ issue.title }}
+    </p>
+
+    <p>
+        <strong>Location:</strong>
+        {{ issue.location }}
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div>
+            <label for="resolution_details">
+                <strong>Action Taken / Resolution Summary:</strong>
+            </label>
+
+            <br><br>
+
+            <textarea
+                id="resolution_details"
+                name="resolution_details"
+                rows="6"
+                cols="60"
+                placeholder="Describe what action was taken to resolve this issue..."
+                required></textarea>
+        </div>
+
+        <br>
+
+        <button type="submit" class="btn">
+            Confirm & Retain Outcome
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}
