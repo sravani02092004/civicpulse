@@ -26,12 +26,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 # ALLOWED_HOSTS = [os.environ.get("RENDER_EXTERNAL_HOSTNAME", "localhost")]
-ALLOWED_HOSTS = [
-    "civicpulse-mnsj.onrender.com",
-    "localhost",
-    "127.0.0.1",
-]
-
+ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
