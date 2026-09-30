@@ -7,27 +7,37 @@ CATEGORY_KEYWORDS = {
     'WATER': ['water', 'pipe', 'leak', 'supply', 'tap', 'contamination', 'drinking'],
     'ELECTRICITY': ['light', 'power', 'wire', 'electricity', 'outage', 'pole', 'transformer', 'dark'],
 }
-
 def categorize_and_assign_issue(issue):
     """
-    Analyzes the issue title and description to detect a category,
-    then automatically assigns the issue to a matching NGO.
+    Detect the issue category and automatically assign it
+    to an NGO matching both category and location.
     """
+
     text_content = f"{issue.title} {issue.description}".lower()
     detected_category = 'OTHER'
 
-    # Check text against keywords
+    # Detect category from title and description
     for category, keywords in CATEGORY_KEYWORDS.items():
-        if any(keyword in text_content for keyword in keywords):
+        if any(keyword.lower() in text_content for keyword in keywords):
             detected_category = category
             break
 
     issue.detected_category = detected_category
 
-    # Attempt to assign an NGO based on matching focus area
-    matching_ngo = NGOProfile.objects.filter(category_focus__icontains=detected_category).first()
+    # Match NGO by both category and operating location
+    matching_ngo = NGOProfile.objects.filter(
+        category_focus__icontains=detected_category,
+        operating_location__icontains=issue.location
+    ).first()
 
-    # Fallback to the first available NGO if no direct match is found
+    # If no exact category + location match,
+    # try category-only match
+    if not matching_ngo:
+        matching_ngo = NGOProfile.objects.filter(
+            category_focus__icontains=detected_category
+        ).first()
+
+    # If still no match, use the first available NGO
     if not matching_ngo:
         matching_ngo = NGOProfile.objects.first()
 
@@ -35,4 +45,5 @@ def categorize_and_assign_issue(issue):
         issue.assigned_ngo = matching_ngo
 
     issue.save()
+
     return issue
